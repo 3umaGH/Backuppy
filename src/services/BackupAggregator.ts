@@ -33,7 +33,7 @@ export class BackupAggregator {
       const archivePath = await this.fileAggr.prepareBackup()
       await uploadToDropbox(archivePath)
 
-      console.log(`[${new Date().toLocaleString()}] Successfully backed up ${archivePath}`)
+      console.log(`[${new Date().toLocaleString()}] Successfully uploaded ${archivePath} to Dropbox.`)
     } catch (err) {
       console.error(err)
     } finally {
