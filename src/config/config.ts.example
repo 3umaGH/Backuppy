@@ -5,7 +5,7 @@
 import { BackupJob } from '../types/types'
 
 export const DROPBOX_API_KEY = ''
-export const TEMP_PATH = 'C:\\backuppy'
+export const TEMP_PATH = 'C:/backuppy'
 export const INTERVAL_HOURS = 6;
 
 export const jobs: BackupJob[] = [
