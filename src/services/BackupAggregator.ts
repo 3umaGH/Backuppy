@@ -6,10 +6,12 @@ import { uploadToDropbox } from '../util'
 
 export class BackupAggregator {
   private jobs: BackupJob[]
+  private hours_interval: number
   private fileAggr: FileAggregator
 
-  constructor(jobs: BackupJob[], fileAggr: FileAggregator) {
+  constructor(jobs: BackupJob[], hoursInterval: number, fileAggr: FileAggregator) {
     this.jobs = jobs
+    this.hours_interval = hoursInterval
     this.fileAggr = fileAggr
 
     try {
@@ -20,6 +22,20 @@ export class BackupAggregator {
   }
 
   private startTimer = async () => {
+    console.log(`Started backup loop. Interval: ${this.hours_interval} hours.`)
+
+    // Initial backup on startup
+    await this.handleJobs()
+
+    setInterval(
+      async () => {
+        await this.handleJobs()
+      },
+      this.hours_interval * 60 * 60 * 1000
+    )
+  }
+
+  private handleJobs = async () => {
     const promises = this.jobs.map(async (job, index) => {
       try {
         return await this.handleJob(job, index)
