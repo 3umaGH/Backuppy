@@ -33,10 +33,14 @@ export class FileAggregator {
   }
 
   cleanUp = () => {
-    fs.rmSync(`${this.temp_path}\\result\\`, { recursive: true })
+    try {
+      fs.rmSync(`${this.temp_path}\\result\\`, { recursive: true })
 
-    if (this.last_archive_path) {
-      fs.rmSync(this.last_archive_path)
+      if (this.last_archive_path) {
+        fs.rmSync(this.last_archive_path)
+      }
+    } catch (err) {
+      console.error('Failed to clean up files.', err)
     }
   }
 }
