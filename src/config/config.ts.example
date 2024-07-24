@@ -4,6 +4,8 @@
 
 import { BackupJob } from '../types/types'
 
+export const DROPBOX_API_KEY = ''
+
 export const jobs: BackupJob[] = [
   {
     uri: '', // Mongo URI

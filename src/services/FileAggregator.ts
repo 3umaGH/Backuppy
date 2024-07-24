@@ -23,13 +23,17 @@ export class FileAggregator {
   }
 
   prepareBackup = async () => {
-    const ISODate = new Date().toISOString().replaceAll(':', '-')
-    const archivePath = `${this.temp_path}\\${ISODate}-bak.zip`
+    try {
+      const ISODate = new Date().toISOString().replaceAll(':', '-')
+      const archivePath = `${this.temp_path}\\${ISODate}-bak.zip`
 
-    await zipFolder(`${this.temp_path}\\result`, archivePath)
-    this.last_archive_path = archivePath
+      await zipFolder(`${this.temp_path}\\result`, archivePath)
+      this.last_archive_path = archivePath
 
-    return archivePath
+      return archivePath
+    } catch (err) {
+      throw new Error(`Failed to prepare backup for uploading. ${err}`)
+    }
   }
 
   cleanUp = () => {

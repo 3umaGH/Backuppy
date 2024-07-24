@@ -2,6 +2,7 @@ import { Collection } from 'mongodb'
 import { DatabaseConnection } from '../database/DatabaseConnection'
 import { BackupJob } from '../types/types'
 import { FileAggregator } from './FileAggregator'
+import { uploadToDropbox } from '../util'
 
 export class BackupAggregator {
   private jobs: BackupJob[]
@@ -27,8 +28,17 @@ export class BackupAggregator {
       }
     })
 
-    await Promise.all(promises)
-    await this.fileAggr.prepareBackup()
+    try {
+      await Promise.all(promises)
+      const archivePath = await this.fileAggr.prepareBackup()
+      await uploadToDropbox(archivePath)
+
+      console.log(`[${new Date().toLocaleString()}] Successfully backed up ${archivePath}`)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      this.fileAggr.cleanUp()
+    }
   }
 
   private handleJob = async (job: BackupJob, index: number) => {
