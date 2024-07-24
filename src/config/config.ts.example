@@ -1,0 +1,17 @@
+/*
+
+
+
+import { BackupJob } from '../types/types'
+
+export const jobs: BackupJob[] = [
+  {
+    uri: '', // Mongo URI
+    dbName: '', // Db Name
+    collections: [], // Collections to backup
+  },
+]
+
+
+
+*/
