@@ -11,32 +11,48 @@ export class BackupAggregator {
     this.jobs = jobs
     this.fileAggr = fileAggr
 
-    this.startTimers()
+    try {
+      this.startTimer()
+    } catch (err) {
+      console.error(`Failed to initalize timer.`, err)
+    }
   }
 
-  private startTimers = () => {
+  private startTimer = async () => {
     const promises = this.jobs.map(async (job, index) => {
-      return await this.handleJob(job, index)
+      try {
+        return await this.handleJob(job, index)
+      } catch (err) {
+        console.error(`Failed to complete a backup job. ${err}`)
+      }
     })
 
-    Promise.all(promises).then(() => {
-      this.fileAggr.prepareBackup()
-    })
+    await Promise.all(promises)
+    await this.fileAggr.prepareBackup()
   }
 
   private handleJob = async (job: BackupJob, index: number) => {
     try {
       const con: DatabaseConnection = new DatabaseConnection(job.uri, job.dbName)
-      console.log(`[${job.dbName}] Connection successful.`)
-      console.log(`[${job.dbName}] Collections to export: ${job.collections.join(', ')}`)
+
+      try {
+        await con.connect()
+        console.log(`[${job.dbName}] Connected. Collections to export: [${job.collections.join(', ')}]`)
+      } catch (err) {
+        throw err
+      }
 
       for (const col of job.collections) {
-        const res = await this.exportCollection(con, job.dbName, col)
+        try {
+          const res = await this.exportCollection(con, job.dbName, col)
 
-        this.fileAggr.saveObject(res, col, `[${index}] ${job.dbName}`)
+          this.fileAggr.saveObject(res, col, `[${index}] ${job.dbName}`)
+        } catch (err) {
+          throw err
+        }
       }
     } catch (err) {
-      console.error(`[${job.dbName}] Connection failed.`, err)
+      throw new Error(`[${job.dbName}] Connection failed. ${err}`)
     }
   }
 
@@ -49,7 +65,7 @@ export class BackupAggregator {
       console.log(`[${dbName}] Exported ${results.length} documents from ${col}.`)
       return results
     } catch (err) {
-      console.error(`[${dbName}] Failed to export ${col} collection.`, err)
+      throw new Error(`Failed to export ${col} collection. ${err}`)
     }
   }
 }

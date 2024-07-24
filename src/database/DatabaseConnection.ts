@@ -9,6 +9,10 @@ export class DatabaseConnection {
     this.db = this.mongoClient.db(dbName)
   }
 
+  connect = () => {
+    return this.mongoClient.connect()
+  }
+
   getDb = () => {
     return this.db
   }
