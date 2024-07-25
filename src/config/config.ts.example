@@ -5,9 +5,9 @@ export const DROPBOX_APP_KEY = '' // From Dropbox App console
 export const DROPBOX_APP_SECRET = '' // From Dropbox App console
 
 // Retreive the Application Code by visiting https://www.dropbox.com/oauth2/authorize?client_id=### APP KEY ###&response_type=code&token_access_type=offline
-// Then running -> DropboxService.retreiveRefreshToken(' ### APP CODE ### ') with provided app code 
+// Then running -> dropboxService.retreiveRefreshToken(' ### APP CODE ### ') with provided app code 
 
-export const DROPBOX_APP_CODE = ''
+export const DROPBOX_REFRESH_TOKEN = ''
 
 export const TEMP_PATH = 'C:\\backuppy'
 export const INTERVAL_HOURS = 6
