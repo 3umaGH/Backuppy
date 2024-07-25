@@ -1,3 +1,4 @@
+import { response } from 'express'
 import * as fs from 'fs'
 import * as path from 'path'
 
@@ -102,6 +103,11 @@ export class DropboxService {
     return await fetch(url, requestOptions)
       .then(response => response.json())
       .then(result => {
+        if (response.statusCode !== 200 || 'error' in result) {
+          // Dropbox returns status 200 for an error -_-
+          throw new Error(`Failed to retreive new access token. ${JSON.stringify(result)}`)
+        }
+
         return result
       })
       .catch(error => {
