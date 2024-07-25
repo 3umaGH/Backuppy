@@ -1,4 +1,3 @@
-import { response } from 'express'
 import * as fs from 'fs'
 import * as path from 'path'
 
@@ -100,19 +99,18 @@ export class DropboxService {
       redirect: 'follow' as RequestRedirect,
     }
 
-    return await fetch(url, requestOptions)
-      .then(response => response.json())
-      .then(result => {
-        if (response.statusCode !== 200 || 'error' in result) {
-          // Dropbox returns status 200 for an error -_-
-          throw new Error(`Failed to retreive new access token. ${JSON.stringify(result)}`)
-        }
+    try {
+      const response = await fetch(url, requestOptions)
+      const result = await response.json()
 
-        return result
-      })
-      .catch(error => {
-        throw new Error(`Failed to retreive new access token. ${error}`)
-      })
+      if (response.status !== 200 || 'error' in result) {
+        throw new Error(`Error response from dropbox: ${JSON.stringify(result)}`)
+      }
+
+      return result
+    } catch (err) {
+      throw new Error(`Failed to retreive new access token. ${err}`)
+    }
   }
 
   upload = async (file: string) => {
