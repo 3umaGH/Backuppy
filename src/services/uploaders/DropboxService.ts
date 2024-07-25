@@ -1,5 +1,5 @@
-import * as path from 'path'
 import * as fs from 'fs'
+import * as path from 'path'
 
 export class DropboxService {
   private readonly appKey: string
@@ -14,6 +14,10 @@ export class DropboxService {
 
     this.access_token = null
     this.refresh_token = null
+  }
+
+  getName = () => {
+    return 'Dropbox'
   }
 
   retreiveRefreshToken = (appCode: string) => {
@@ -57,13 +61,16 @@ export class DropboxService {
 
   startRefreshInterval = (refreshRate: number) => {
     console.log(`Started Dropbox refresh token interval. Refreshing every ${refreshRate} seconds.`)
-    setInterval(() => {
-      this.refreshAccessToken().then(res => {
-        console.log('Retreived new Dropbox access token.')
+    setInterval(
+      () => {
+        this.refreshAccessToken().then(res => {
+          console.log('Retreived new Dropbox access token.')
 
-        this.access_token = res.access_token
-      })
-    }, (refreshRate - 10) * 1000)
+          this.access_token = res.access_token
+        })
+      },
+      (refreshRate - 10) * 1000
+    )
   }
 
   private refreshAccessToken = async (): Promise<{ access_token: string; expires_in: number }> => {
