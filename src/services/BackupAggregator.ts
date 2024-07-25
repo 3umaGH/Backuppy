@@ -1,18 +1,19 @@
 import { Collection } from 'mongodb'
 import { DatabaseConnection } from '../database/DatabaseConnection'
-import { BackupJob } from '../types/types'
+import { BackupJob, UploadService } from '../types/types'
 import { FileAggregator } from './FileAggregator'
-import { uploadToDropbox } from '../util'
 
 export class BackupAggregator {
-  private jobs: BackupJob[]
-  private hours_interval: number
-  private fileAggr: FileAggregator
+  private readonly jobs: BackupJob[]
+  private readonly hours_interval: number
+  private readonly fileAggr: FileAggregator
+  private readonly uploaders: UploadService[]
 
-  constructor(jobs: BackupJob[], hoursInterval: number, fileAggr: FileAggregator) {
+  constructor(jobs: BackupJob[], hoursInterval: number, fileAggr: FileAggregator, uploaders: UploadService[]) {
     this.jobs = jobs
     this.hours_interval = hoursInterval
     this.fileAggr = fileAggr
+    this.uploaders = uploaders
 
     try {
       this.startTimer()
@@ -47,9 +48,20 @@ export class BackupAggregator {
     try {
       await Promise.all(promises)
       const archivePath = await this.fileAggr.prepareBackup()
-      await uploadToDropbox(archivePath)
 
-      console.log(`[${new Date().toLocaleString()}] Successfully uploaded ${archivePath} to Dropbox.`)
+      for (const uploader of this.uploaders) {
+        try {
+          const success = await uploader.upload(archivePath)
+
+          if (success) {
+            console.log(
+              `[${new Date().toLocaleString()}] Successfully uploaded ${archivePath} to ${uploader.getName()}.`
+            )
+          }
+        } catch (err) {
+          console.error(`[${new Date().toLocaleString()}] Failed to upload backup to ${uploader.getName()}.`, err)
+        }
+      }
     } catch (err) {
       console.error(err)
     } finally {

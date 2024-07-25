@@ -1,7 +1,6 @@
-import JSZip from 'jszip'
 import * as fs from 'fs'
+import JSZip from 'jszip'
 import * as path from 'path'
-import { DROPBOX_API_KEY } from './config/config'
 
 export async function addFolderToZip(zip: JSZip, folderPath: string, folderName: string = ''): Promise<void> {
   const files = fs.readdirSync(folderPath)
@@ -39,28 +38,4 @@ export async function zipFolder(sourceFolder: string, outPath: string): Promise<
 
   // Write zip content to file
   fs.writeFileSync(outPath, content)
-}
-
-export const uploadToDropbox = async (file: string) => {
-  const data = fs.readFileSync(file)
-
-  const res = await fetch('https://content.dropboxapi.com/2/files/upload', {
-    method: 'post',
-    body: data,
-    headers: {
-      Authorization: `Bearer ${DROPBOX_API_KEY}`,
-      'Dropbox-API-Arg': JSON.stringify({
-        path: `/${path.basename(file)}`,
-        mode: 'overwrite',
-        autorename: true,
-      }),
-      'Content-Type': 'application/octet-stream',
-    },
-  })
-
-  if (res.status !== 200) {
-    throw new Error(`Failed to upload file to Dropbox. Status: ${res.status}, response: ${await res.text()}`)
-  } else {
-    return true
-  }
 }
