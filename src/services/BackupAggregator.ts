@@ -89,6 +89,8 @@ export class BackupAggregator {
           throw err
         }
       }
+
+      con.close()
     } catch (err) {
       throw new Error(`[${job.dbName}] Connection failed. ${err}`)
     }
