@@ -13,6 +13,10 @@ export class DatabaseConnection {
     return this.mongoClient.connect()
   }
 
+  close = () => {
+    return this.mongoClient.close()
+  }
+
   getDb = () => {
     return this.db
   }
