@@ -8,7 +8,7 @@ A simple utility service that backs up your MongoDB database collections. Suppor
 1. Clone the repository:
    
    ```
-   git clone https://github.com/your-username/backuppy.git
+   git clone https://github.com/3umaGH/Backuppy.git
    cd backuppy
 ### Install Dependencies
 1. Install the necessary dependencies:
