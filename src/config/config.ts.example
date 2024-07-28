@@ -4,7 +4,7 @@ import { BackupJob } from '../types/types'
 export const DROPBOX_APP_KEY = '' // From Dropbox App console
 export const DROPBOX_APP_SECRET = '' // From Dropbox App console
 
-// Retreive the refresh token by visiting https://www.dropbox.com/oauth2/authorize?client_id=### APP KEY ###&response_type=code&token_access_type=offline
+// Retreive the Application Code by visiting https://www.dropbox.com/oauth2/authorize?client_id=### APP KEY ###&response_type=code&token_access_type=offline
 // Then running -> dropboxService.retreiveRefreshToken(' ### APP CODE ### ') with provided app code 
 
 export const DROPBOX_REFRESH_TOKEN = ''
